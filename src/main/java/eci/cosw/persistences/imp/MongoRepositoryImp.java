@@ -11,8 +11,7 @@ import eci.cosw.model.User;
 import eci.cosw.persistences.IMongoRepository;
 import eci.cosw.persistences.repositories.ITodoRepository;
 import eci.cosw.persistences.repositories.IUserRepository;
-import eci.exception.TaskPlannerException;
-
+import eci.exception.TodoPlannerException;
 
 @Service
 public class MongoRepositoryImp implements IMongoRepository {
@@ -24,82 +23,72 @@ public class MongoRepositoryImp implements IMongoRepository {
 
 	@Override
 	public List<User> getUsers() {
-		// TODO Auto-generated method stub
 		return userRepository.findAll();
 	}
 
 	@Override
-	public User getUser(String responsable) throws TaskPlannerException {
-		// TODO Auto-generated method stub
+	public User getUser(String responsable) throws TodoPlannerException {
 		Optional<User> user = userRepository.findById(responsable);
 		if (user.isPresent())
 			return user.get();
-		throw new TaskPlannerException(TaskPlannerException.NOT_FOUND);
+		throw new TodoPlannerException(TodoPlannerException.NOT_FOUND);
 	}
 
 	@Override
-	public User saveUser(User user) throws TaskPlannerException {
-		// TODO Auto-generated method stub
+	public User saveUser(User user) throws TodoPlannerException {
 		if (userRepository.existsById(user.getEmail()))
-			throw new TaskPlannerException(TaskPlannerException.USER_ALREADY_EXISTS);
+			throw new TodoPlannerException(TodoPlannerException.USER_ALREADY_EXISTS);
 		return userRepository.save(user);
 	}
 
 	@Override
 	public User updateUser(User user) {
-		// TODO Auto-generated method stub
+
 		return userRepository.save(user);
 	}
 
 	@Override
 	public void removeUser(String responsable) {
-		// TODO Auto-generated method stub
 		userRepository.deleteById(responsable);
 
 	}
+
 	@Override
 	public List<Todo> getTodos() {
-		// TODO Auto-generated method stub
 		return TodoRepository.findAll();
 	}
 
 	@Override
 	public List<Todo> getTodosByResponsable(String responsable) {
-		// TODO Auto-generated method stub
 		return TodoRepository.findAllByOwner(responsable);
 	}
 
 	@Override
-	public Todo getTodo(String id) throws TaskPlannerException {
-		// TODO Auto-generated method stub
+	public Todo getTodo(String id) throws TodoPlannerException {
 		Optional<Todo> Todo = TodoRepository.findById(id);
 		if (Todo.isPresent())
 			return Todo.get();
-		throw new TaskPlannerException(TaskPlannerException.NOT_FOUND);
+		throw new TodoPlannerException(TodoPlannerException.NOT_FOUND);
 	}
 
 	@Override
 	public Todo saveTodo(Todo Todo) {
-		// TODO Auto-generated method stub
 		return TodoRepository.save(Todo);
 	}
 
 	@Override
 	public Todo updateTodo(Todo Todo) {
-		// TODO Auto-generated method stub
 		return TodoRepository.save(Todo);
 	}
 
 	@Override
 	public void removeTodo(String id) {
-		// TODO Auto-generated method stub
 		TodoRepository.deleteById(id);
 
 	}
 
 	@Override
-	public Todo assignTodoToUser(String TodoId, User user) throws TaskPlannerException {
-		// TODO Auto-generated method stub
+	public Todo assignTodoToUser(String TodoId, User user) throws TodoPlannerException {
 		Todo Todo = getTodo(TodoId);
 		Todo.setResponsible(user.getEmail());
 		return updateTodo(Todo);

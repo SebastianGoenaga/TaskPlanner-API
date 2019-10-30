@@ -8,46 +8,38 @@ import org.springframework.stereotype.Service;
 import eci.cosw.model.User;
 import eci.cosw.persistences.IMongoRepository;
 import eci.cosw.services.contracts.IUserService;
-import eci.exception.TaskPlannerException;
+import eci.exception.TodoPlannerException;
 
-
-
-/**
- * UserService
- */
 @Service
-public class UserService implements IUserService{
+public class UserService implements IUserService {
 
-    @Autowired
+	@Autowired
 	private IMongoRepository userRepository;
 
 	@Override
-	public List<User> getUsersList()  {
+	public List<User> getUsersList() {
 		return userRepository.getUsers();
 	}
 
 	@Override
-	public User getUser(String responsable) throws TaskPlannerException {
+	public User getUser(String responsable) throws TodoPlannerException {
 		return userRepository.getUser(responsable);
 	}
 
 	@Override
-	public User createUser(User user) throws TaskPlannerException {
-		// TODO Auto-generated method stub
+	public User createUser(User user) throws TodoPlannerException {
 		return userRepository.saveUser(user);
 	}
 
 	@Override
 	public User updateUser(User user) {
-		// TODO Auto-generated method stub
 		return userRepository.updateUser(user);
 	}
 
 	@Override
-	public void removeUser(String responsable) throws TaskPlannerException{
-		// TODO Auto-generated method stub
+	public void removeUser(String responsable) throws TodoPlannerException {
 		userRepository.removeUser(responsable);
 
 	}
-    
+
 }

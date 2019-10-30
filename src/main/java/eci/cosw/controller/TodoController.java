@@ -18,7 +18,7 @@ import eci.cosw.model.User;
 import eci.cosw.services.TodoService;
 
 @RestController
-@RequestMapping("/api/Todos")
+@RequestMapping("/todo")
 @CrossOrigin(origins = "*")
 public class TodoController {
 
@@ -43,11 +43,11 @@ public class TodoController {
         }
     }
 
-    @GetMapping("/byUser/{userId}")
-    public ResponseEntity<?> getTodosByUserId(@PathVariable("userId") String userId) {
+    @GetMapping("/todoUser/{userID}")
+    public ResponseEntity<?> getTodosByUserId(@PathVariable("userID") String userID) {
         try {
 
-            return new ResponseEntity<>(TodoService.getTodosByUserId(userId), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(TodoService.getTodosByUserId(userID), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -62,8 +62,8 @@ public class TodoController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateTodoHandler(@RequestBody Todo Todo) {
+    @PutMapping("/updateTask")
+    public ResponseEntity<?> updateTodo(@RequestBody Todo Todo) {
         try {
             return new ResponseEntity<>(TodoService.updateTodo(Todo), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
@@ -71,17 +71,17 @@ public class TodoController {
         }
     }
 
-    @PutMapping("/assign/{TodoId}")
-    public ResponseEntity<?> assignTodoHandler(@PathVariable("TodoId") String TodoId, @RequestBody User user) {
+    @PutMapping("/assign/{TodoID}")
+    public ResponseEntity<?> assignTodo(@PathVariable("TodoID") String TodoID, @RequestBody User user) {
         try {
-            return new ResponseEntity<>(TodoService.assignTodoToUser(TodoId, user), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(TodoService.assignTodoToUser(TodoID, user), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTodoHandler(@PathVariable String id) {
+    public ResponseEntity<?> deleteTodo(@PathVariable String id) {
         try {
             TodoService.removeTodo(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);

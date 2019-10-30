@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import eci.cosw.model.User;
 import eci.cosw.services.UserService;
 import eci.cosw.utils.StringUtils;
-import eci.exception.TaskPlannerException;
+import eci.exception.TodoPlannerException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @CrossOrigin(origins = "*")
 public class UserController {
 
@@ -34,7 +34,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUserHandler(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             String passwordHash = StringUtils.getSHA256Hash(user.getPassword());
             user.setPassword(passwordHash);
@@ -44,16 +44,13 @@ public class UserController {
         }
     }
 
-    @RequestMapping( value = "/login", method = RequestMethod.POST )
-    public Token login( @RequestBody User login )
-            throws ServletException
-    {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Token login(@RequestBody User login) throws ServletException {
 
         String jwtToken;
 
-        if ( login.getEmail() == null || login.getPassword() == null )
-        {
-            throw new ServletException( "Please fill in username and password" );
+        if (login.getEmail() == null || login.getPassword() == null) {
+            throw new ServletException("Please fill in username and password");
         }
 
         String username = login.getEmail();
@@ -62,46 +59,39 @@ public class UserController {
         User user;
         try {
             user = userService.getUser(username);
-        } catch (TaskPlannerException e) {
-            throw new ServletException( e.getMessage() );
+        } catch (TodoPlannerException e) {
+            throw new ServletException(e.getMessage());
         }
 
         String passwordHash = user.getPassword();
 
-        if ( !StringUtils.isPasswordValid(password, passwordHash) )
-        {
-            throw new ServletException( "Invalid login. Please check your name and password." );
+        if (!StringUtils.isPasswordValid(password, passwordHash)) {
+            throw new ServletException("Invalid login. Please check your name and password.");
         }
-        //
-        jwtToken = Jwts.builder().setSubject( username ).claim( "roles", "user" ).setIssuedAt( new Date() ).signWith(
-                SignatureAlgorithm.HS256, "secretkey" ).compact();
+        jwtToken = Jwts.builder().setSubject(username).claim("roles", "user").setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, "secretkey").compact();
 
-        return new Token( jwtToken );
+        return new Token(jwtToken);
     }
 
-    public class Token
-    {
+    public class Token {
         String accessToken;
 
-        public Token( String accessToken )
-        {
+        public Token(String accessToken) {
             this.accessToken = accessToken;
         }
 
-        public String getAccessToken()
-        {
+        public String getAccessToken() {
             return accessToken;
         }
 
-        public void setAccessToken( String access_token )
-        {
+        public void setAccessToken(String access_token) {
             this.accessToken = access_token;
         }
     }
 
-
     @GetMapping
-    public ResponseEntity<?> getUsersHandler() {
+    public ResponseEntity<?> getUsers() {
         try {
             return new ResponseEntity<>(userService.getUsersList(), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
@@ -110,7 +100,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUsersByIdHandler(@PathVariable("id") String id) {
+    public ResponseEntity<?> getUsersById(@PathVariable("id") String id) {
         try {
             return new ResponseEntity<>(userService.getUser(id), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
@@ -119,7 +109,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUserHandler(@RequestBody User user) {
+    public ResponseEntity<?> updateUser(@RequestBody User user) {
         try {
             return new ResponseEntity<>(userService.updateUser(user), HttpStatus.ACCEPTED);
         } catch (Exception ex) {
@@ -128,7 +118,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUserHandler(@PathVariable String id) {
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
         try {
             userService.removeUser(id);
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
